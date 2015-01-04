@@ -60,22 +60,38 @@ class VenationAlgorithm {
     return _veinNodes.get(index);
   }
 
-  ArrayList<Auxin> getNeighborAuxins(int veinNodeIndex) {
-    ArrayList<Integer> neighborAuxinIndices = getNeighborAuxinIndices(veinNodeIndex);
+  ArrayList<Auxin> getNeighborAuxins(VeinNode veinNode) {
+    float dx, dy, r = 4.0 * _neighborhoodRadius * _neighborhoodRadius;
+    PVector p, veinNodePos = veinNode.getPositionRef();
     ArrayList<Auxin> neighborAuxins = new ArrayList<Auxin>();
-    for (int i : neighborAuxinIndices) {
-      neighborAuxins.add(_auxins.get(i));
+    for (Auxin auxin : _auxins) {
+      p = auxin.getPositionRef();
+      dx = p.x - veinNodePos.x;
+      dy = p.y - veinNodePos.y;
+      if (dx * dx + dy * dy < r) {
+        neighborAuxins.add(auxin);
+      }
     }
     return neighborAuxins;
   }
 
-  ArrayList<Auxin> getInfluencerAuxins(int veinNodeIndex) {
-    ArrayList<Integer> influencerAuxinIndices = getInfluencerAuxinIndices(veinNodeIndex);
+  ArrayList<Auxin> getInfluencerAuxins(VeinNode veinNode) {
+    ArrayList<Auxin> neighborAuxins = getNeighborAuxins(veinNode);
     ArrayList<Auxin> influencerAuxins = new ArrayList<Auxin>();
-    for (int i : influencerAuxinIndices) {
-      influencerAuxins.add(_auxins.get(i));
+    for (Auxin auxin : neighborAuxins) {
+      if (veinNode == getInfluencedVeinNode(auxin)) {
+        influencerAuxins.add(auxin);
+      }
     }
     return influencerAuxins;
+  }
+
+  /**
+   * Each auxin only influences the nearest vein node.
+   */
+  VeinNode getInfluencedVeinNode(Auxin auxin) {
+    PVector auxinPos = auxin.getPositionRef();
+    return getNearestVeinNode(auxinPos.x, auxinPos.y);
   }
 
   PVector getAuxinInfluenceDirection(VeinNode veinNode, ArrayList<Auxin> auxinInfluencers) {
@@ -97,57 +113,21 @@ class VenationAlgorithm {
     return result;
   }
 
-  /// Private index accessors
-
-  private ArrayList<Integer> getNeighborAuxinIndices(int veinNodeIndex) {
-    float dx, dy, r = 4.0 * _neighborhoodRadius * _neighborhoodRadius;
-    PVector p, veinNodePos = _veinNodes.get(veinNodeIndex).getPositionRef();
-    ArrayList<Integer> neighborAuxinIndices = new ArrayList<Integer>();
-    for (int i = 0; i < _auxins.size(); i++) {
-      p = _auxins.get(i).getPositionRef();
-      dx = p.x - veinNodePos.x;
-      dy = p.y - veinNodePos.y;
-      if (dx * dx + dy * dy < r) {
-        neighborAuxinIndices.add(i);
-      }
-    }
-    return neighborAuxinIndices;
-  }
-
-  private ArrayList<Integer> getInfluencerAuxinIndices(int veinNodeIndex) {
-    ArrayList<Integer> neighborAuxinIndices = getNeighborAuxinIndices(veinNodeIndex);
-    ArrayList<Integer> influencerAuxinIndices = new ArrayList<Integer>();
-    for (int auxinIndex : neighborAuxinIndices) {
-      if (veinNodeIndex == getInfluencedVeinNodeIndex(auxinIndex)) {
-        influencerAuxinIndices.add(auxinIndex);
-      }
-    }
-    return influencerAuxinIndices;
-  }
-
-  /**
-   * Each auxin only influences the nearest vein node.
-   */
-  int getInfluencedVeinNodeIndex(int auxinIndex) {
-    PVector auxinPos = _auxins.get(auxinIndex).getPositionRef();
-    return getNearestVeinNodeIndex(auxinPos.x, auxinPos.y);
-  }
-
-  int getNearestVeinNodeIndex(float x, float y) {
-    int candidateIndex = -1;
+  VeinNode getNearestVeinNode(float x, float y) {
+    VeinNode candidate = null;
     PVector p;
     float dx, dy, distSq, candidateDistSq = 0;
-    for (int i = 0; i < _veinNodes.size(); i++) {
-      p = _veinNodes.get(i).getPositionRef();
+    for (VeinNode veinNode : _veinNodes) {
+      p = veinNode.getPositionRef();
       dx = p.x - x;
       dy = p.y - y;
       distSq = dx * dx + dy * dy;
-      if (candidateIndex < 0 || distSq < candidateDistSq) {
-        candidateIndex = i;
+      if (candidate == null || distSq < candidateDistSq) {
+        candidate = veinNode;
         candidateDistSq = distSq;
       }
     }
-    return candidateIndex;
+    return candidate;
   }
 
   /// Algorithm
@@ -187,7 +167,7 @@ class VenationAlgorithm {
 
   void placeVeinNode(int seedVeinNodeIndex) {
     VeinNode veinNode = _veinNodes.get(seedVeinNodeIndex);
-    ArrayList<Auxin> influencerAuxins = getInfluencerAuxins(seedVeinNodeIndex);
+    ArrayList<Auxin> influencerAuxins = getInfluencerAuxins(veinNode);
     PVector p = getAuxinInfluenceDirection(veinNode, influencerAuxins);
     if (p != null) {
       if (p.mag() <= 0) {

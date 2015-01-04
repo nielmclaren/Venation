@@ -64,18 +64,17 @@ class VenationDrawer {
   }
 
   void drawNeighborAuxins() {
-    int count = _va.numVeinNodes();
-    for (int i = 0; i < count; i++) {
-      drawNeighborAuxins(i);
+    for (VeinNode veinNode : _va.getVeinNodes()) {
+      drawNeighborAuxins(veinNode);
     }
   }
 
-  void drawNeighborAuxins(int veinNodeIndex) {
+  void drawNeighborAuxins(VeinNode veinNode) {
     float r = _va.getAuxinRadius() * _size;
     PVector p;
 
-    PVector veinNodePos = _va.getVeinNode(veinNodeIndex).getPositionRef();
-    ArrayList<Auxin> neighborAuxins = _va.getNeighborAuxins(veinNodeIndex);
+    PVector veinNodePos = veinNode.getPositionRef();
+    ArrayList<Auxin> neighborAuxins = _va.getNeighborAuxins(veinNode);
     for (Auxin auxin : neighborAuxins) {
       p = auxin.getPositionRef();
       _g.stroke(255, 192, 192);
@@ -86,18 +85,17 @@ class VenationDrawer {
   }
 
   void drawInfluencerAuxins() {
-    int count = _va.numVeinNodes();
-    for (int i = 0; i < count; i++) {
-      drawInfluencerAuxins(i);
+    for (VeinNode veinNode : _va.getVeinNodes()) {
+      drawInfluencerAuxins(veinNode);
     }
   }
 
-  void drawInfluencerAuxins(int veinNodeIndex) {
+  void drawInfluencerAuxins(VeinNode veinNode) {
     float r = _va.getAuxinRadius() * _size * 0.6;
     PVector p;
 
-    PVector veinNode = _va.getVeinNode(veinNodeIndex).getPositionRef();
-    ArrayList<Auxin> influencerAuxins = _va.getInfluencerAuxins(veinNodeIndex);
+    PVector veinNodePos = veinNode.getPositionRef();
+    ArrayList<Auxin> influencerAuxins = _va.getInfluencerAuxins(veinNode);
     for (Auxin auxin : influencerAuxins) {
       p = auxin.getPositionRef();
       _g.noStroke();
@@ -107,21 +105,19 @@ class VenationDrawer {
       _g.stroke(255, 128, 128);
       _g.strokeWeight(2);
       _g.noFill();
-      _g.line(_size * p.x, _size * p.y, _size * veinNode.x, _size * veinNode.y);
+      _g.line(_size * p.x, _size * p.y, _size * veinNodePos.x, _size * veinNodePos.y);
     }
   }
 
   void drawAuxinInfluenceDirections() {
-    int count = _va.numVeinNodes();
-    for (int i = 0; i < count; i++) {
-      drawAuxinInfluenceDirection(i);
+    for (VeinNode veinNode : _va.getVeinNodes()) {
+      drawAuxinInfluenceDirection(veinNode);
     }
   }
 
-  void drawAuxinInfluenceDirection(int veinNodeIndex) {
-    VeinNode veinNode = _va.getVeinNode(veinNodeIndex);
+  void drawAuxinInfluenceDirection(VeinNode veinNode) {
     PVector veinNodePos = veinNode.getPosition();
-    PVector p = _va.getAuxinInfluenceDirection(veinNode, _va.getInfluencerAuxins(veinNodeIndex));
+    PVector p = _va.getAuxinInfluenceDirection(veinNode, _va.getInfluencerAuxins(veinNode));
     if (p != null) {
       veinNodePos.mult(_size);
 
