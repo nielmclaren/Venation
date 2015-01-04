@@ -15,7 +15,7 @@ class VenationAlgorithm {
     _auxinRadius = 0.025;
     _veinNodes = new ArrayList<VeinNode>();
     _veinNodeRadius = 0.0125;
-    _killRadius = 0.075;
+    _killRadius = 0.025;
     _neighborhoodRadius = 0.1;
 
     seedVeinNodes();
@@ -104,7 +104,18 @@ class VenationAlgorithm {
   }
 
   ArrayList<VeinNode> getInfluencedVeinNodes(Auxin auxin) {
-    return getRelativeNeighborVeinNodes(auxin);
+    VeinNode veinNode;
+    PVector veinNodePos, auxinPos = auxin.getPositionRef();
+    ArrayList<VeinNode> veinNodes = getRelativeNeighborVeinNodes(auxin);
+    for (int i = 0; i < veinNodes.size(); i++) {
+      veinNode = veinNodes.get(i);
+      veinNodePos = veinNode.getPositionRef();
+      if (PVector.sub(veinNodePos, auxinPos).mag() < _killRadius) {
+        veinNodes.remove(i);
+        i--;
+      }
+    }
+    return veinNodes;
   }
 
   PVector getAuxinInfluenceDirection(VeinNode veinNode, ArrayList<Auxin> auxinInfluencers) {
@@ -226,19 +237,52 @@ class VenationAlgorithm {
         p.rotate(random(1) * 2 * PI);
       }
       p.mult(2 * _veinNodeRadius);
-      p.rotate((2 * random(1) - 1) * 2 * PI * 0.05); // jitter
+      //p.rotate((2 * random(1) - 1) * 2 * PI * 0.05); // jitter
       p.add(veinNode.getPositionRef());
       _veinNodes.add(new VeinNode(p));
     }
   }
 
   void killAuxins() {
-    PVector p;
+    Auxin auxin;
+    VeinNode veinNode;
+    PVector auxinPos, veinNodePos;
+    float dist;
+
     for (int i = 0; i < _auxins.size(); i++) {
-      p = _auxins.get(i).getPositionRef();
-      if (hitTestExistingAuxin(p.x, p.y)) {
-        _auxins.remove(i);
-        i--;
+      auxin = _auxins.get(i);
+      auxinPos = auxin.getPositionRef();
+      if (auxin.isDoomed()) {
+        ArrayList<VeinNode> influencedVeinNodes = getInfluencedVeinNodes(auxin);
+        ArrayList<VeinNode> taggedVeinNodes = auxin.getTaggedVeinNodesRef();
+        for (int j = 0; j < taggedVeinNodes.size(); j++) {
+          veinNode = taggedVeinNodes.get(j);
+          veinNodePos = veinNode.getPositionRef();
+          // FIXME: Inefficient because of PVector instantiation.
+          dist = PVector.sub(veinNodePos, auxinPos).mag();
+          if (dist < _killRadius || !influencedVeinNodes.contains(veinNode)) {
+            taggedVeinNodes.remove(j);
+            j--;
+          }
+        }
+
+        if (taggedVeinNodes.size() <= 0) {
+          _auxins.remove(i);
+          i--;
+        }
+      }
+      else {
+        if (hitTestExistingAuxin(auxinPos.x, auxinPos.y)) {
+          ArrayList<VeinNode> influencedVeinNodes = getInfluencedVeinNodes(auxin);
+          if (influencedVeinNodes.size() > 1) {
+            auxin.setDoomed(true);
+            auxin.setTaggedVeinNodes(influencedVeinNodes);
+          }
+          else {
+            _auxins.remove(i);
+            i--;
+          }
+        }
       }
     }
   }

@@ -40,11 +40,16 @@ class VenationDrawer {
 
     _g.stroke(255, 192, 192);
     _g.strokeWeight(1);
-    _g.fill(255, 224, 224);
 
     ArrayList<Auxin> auxins = _va.getAuxins();
     for (Auxin auxin : auxins) {
       p = auxin.getPositionRef();
+      if (auxin.isDoomed()) {
+        _g.fill(255, 128, 128);
+      }
+      else {
+        _g.fill(255, 224, 224);
+      }
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
     }
   }
