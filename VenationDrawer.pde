@@ -21,38 +21,44 @@ class VenationDrawer {
 
   void drawKillRadii() {
     float r = _va.getKillRadius() * _size;
+    PVector p;
 
     _g.noStroke();
     _g.fill(244);
 
-    ArrayList<PVector> veinNodes = _va.getVeinNodes();
-    for (PVector p : veinNodes) {
+    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
+    for (VeinNode veinNode : veinNodes) {
+      p = veinNode.getPositionRef();
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
     }
   }
 
   void drawAuxins() {
     float r = 0.025 * _size;
+    PVector p;
 
     _g.stroke(255, 192, 192);
     _g.strokeWeight(1);
     _g.fill(255, 224, 224);
 
-    ArrayList<PVector> auxins = _va.getAuxins();
-    for (PVector p : auxins) {
+    ArrayList<Auxin> auxins = _va.getAuxins();
+    for (Auxin auxin : auxins) {
+      p = auxin.getPositionRef();
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
     }
   }
 
   void drawVeinNodes() {
     float r = _va.getVeinNodeRadius() * _size;
+    PVector p;
 
     _g.stroke(0);
     _g.strokeWeight(2);
     _g.fill(255);
 
-    ArrayList<PVector> veinNodes = _va.getVeinNodes();
-    for (PVector p : veinNodes) {
+    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
+    for (VeinNode veinNode : veinNodes) {
+      p = veinNode.getPositionRef();
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
     }
   }
@@ -66,14 +72,16 @@ class VenationDrawer {
 
   void drawNeighborAuxins(int veinNodeIndex) {
     float r = _va.getAuxinRadius() * _size;
+    PVector p;
 
-    PVector veinNode = _va.getVeinNode(veinNodeIndex);
-    ArrayList<PVector> neighborAuxins = _va.getNeighborAuxins(veinNodeIndex);
-    for (PVector p : neighborAuxins) {
+    PVector veinNodePos = _va.getVeinNode(veinNodeIndex).getPositionRef();
+    ArrayList<Auxin> neighborAuxins = _va.getNeighborAuxins(veinNodeIndex);
+    for (Auxin auxin : neighborAuxins) {
+      p = auxin.getPositionRef();
       _g.stroke(255, 192, 192);
       _g.strokeWeight(1);
       _g.noFill();
-      _g.line(_size * p.x, _size * p.y, _size * veinNode.x, _size * veinNode.y);
+      _g.line(_size * p.x, _size * p.y, _size * veinNodePos.x, _size * veinNodePos.y);
     }
   }
 
@@ -86,10 +94,12 @@ class VenationDrawer {
 
   void drawInfluencerAuxins(int veinNodeIndex) {
     float r = _va.getAuxinRadius() * _size * 0.6;
+    PVector p;
 
-    PVector veinNode = _va.getVeinNode(veinNodeIndex);
-    ArrayList<PVector> influencerAuxins = _va.getInfluencerAuxins(veinNodeIndex);
-    for (PVector p : influencerAuxins) {
+    PVector veinNode = _va.getVeinNode(veinNodeIndex).getPositionRef();
+    ArrayList<Auxin> influencerAuxins = _va.getInfluencerAuxins(veinNodeIndex);
+    for (Auxin auxin : influencerAuxins) {
+      p = auxin.getPositionRef();
       _g.noStroke();
       _g.fill(255);
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
@@ -109,18 +119,19 @@ class VenationDrawer {
   }
 
   void drawAuxinInfluenceDirection(int veinNodeIndex) {
-    PVector veinNode = _va.getVeinNodes().get(veinNodeIndex).get();
+    VeinNode veinNode = _va.getVeinNode(veinNodeIndex);
+    PVector veinNodePos = veinNode.getPosition();
     PVector p = _va.getAuxinInfluenceDirection(veinNode, _va.getInfluencerAuxins(veinNodeIndex));
     if (p != null) {
-      veinNode.mult(_size);
+      veinNodePos.mult(_size);
 
       p.mult(20);
-      p.add(veinNode);
+      p.add(veinNodePos);
 
       _g.stroke(0);
       _g.strokeWeight(3);
       _g.noFill();
-      _g.line(veinNode.x, veinNode.y, p.x, p.y);
+      _g.line(veinNodePos.x, veinNodePos.y, p.x, p.y);
     }
   }
 }
