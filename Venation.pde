@@ -43,7 +43,7 @@ void keyReleased() {
       break;
 
     case 'r':
-      save(fileNamer.next());
+      save("render.png");
       break;
   }
 }

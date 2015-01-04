@@ -17,6 +17,7 @@ class VenationDrawer {
     drawInfluencerAuxins();
     drawVeinNodes();
     drawAuxinInfluenceDirections();
+    drawInfluentialAuxins();
   }
 
   void drawKillRadii() {
@@ -74,7 +75,7 @@ class VenationDrawer {
     PVector p;
 
     PVector veinNodePos = veinNode.getPositionRef();
-    ArrayList<Auxin> neighborAuxins = _va.getNeighborAuxins(veinNode);
+    ArrayList<Auxin> neighborAuxins = _va.getNeighborAuxins(veinNodePos.x, veinNodePos.y);
     for (Auxin auxin : neighborAuxins) {
       p = auxin.getPositionRef();
       _g.stroke(255, 192, 192);
@@ -98,14 +99,15 @@ class VenationDrawer {
     ArrayList<Auxin> influencerAuxins = _va.getInfluencerAuxins(veinNode);
     for (Auxin auxin : influencerAuxins) {
       p = auxin.getPositionRef();
-      _g.noStroke();
-      _g.fill(255);
-      _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
 
       _g.stroke(255, 128, 128);
       _g.strokeWeight(2);
       _g.noFill();
       _g.line(_size * p.x, _size * p.y, _size * veinNodePos.x, _size * veinNodePos.y);
+
+      _g.noStroke();
+      _g.fill(255);
+      _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
     }
   }
 
@@ -128,6 +130,18 @@ class VenationDrawer {
       _g.strokeWeight(3);
       _g.noFill();
       _g.line(veinNodePos.x, veinNodePos.y, p.x, p.y);
+    }
+  }
+
+  void drawInfluentialAuxins() {
+    PVector auxinPos;
+    for (Auxin auxin : _va.getAuxins()) {
+      if (_va.getRelativeNeighborVeinNodes(auxin).size() > 1) {
+        auxinPos = auxin.getPositionRef();
+        _g.noStroke();
+        _g.fill(128);
+        _g.ellipse(_size * auxinPos.x, _size * auxinPos.y, 15, 15);
+      }
     }
   }
 }
