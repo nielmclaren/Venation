@@ -132,7 +132,16 @@ class VenationAlgorithm {
     }
 
     if (result != null) {
-      result.normalize();
+      if (result.mag() < 1) {
+        Auxin auxin = auxinInfluencers.get(0);
+        p = auxin.getPosition();
+        p.sub(veinNode.getPositionRef());
+        p.normalize();
+        result = p;
+      }
+      else {
+        result.normalize();
+      }
     }
     return result;
   }
