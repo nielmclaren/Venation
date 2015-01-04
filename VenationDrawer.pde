@@ -59,7 +59,7 @@ class VenationDrawer {
     PVector p;
 
     _g.stroke(0);
-    _g.strokeWeight(2);
+    _g.strokeWeight(1);
     _g.fill(255);
 
     ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
@@ -132,7 +132,7 @@ class VenationDrawer {
       p.add(veinNodePos);
 
       _g.stroke(0);
-      _g.strokeWeight(3);
+      _g.strokeWeight(2);
       _g.noFill();
       _g.line(veinNodePos.x, veinNodePos.y, p.x, p.y);
     }
@@ -145,7 +145,7 @@ class VenationDrawer {
         auxinPos = auxin.getPositionRef();
         _g.noStroke();
         _g.fill(128);
-        _g.ellipse(_size * auxinPos.x, _size * auxinPos.y, 15, 15);
+        _g.ellipse(_size * auxinPos.x, _size * auxinPos.y, 10, 10);
       }
     }
   }

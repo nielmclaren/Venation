@@ -4,7 +4,7 @@ VenationDrawer vd;
 FileNamer folderNamer, fileNamer;
 
 void setup() {
-  size(800, 800);
+  size(540, 540);
 
   va = new VenationAlgorithm();
   vd = new VenationDrawer(va, this.g, width);
