@@ -50,7 +50,7 @@ void keyReleased() {
       break;
 
     case 'r':
-      save("render.png");
+      save(fileNamer.next());
       break;
   }
 }

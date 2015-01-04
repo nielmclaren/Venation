@@ -12,6 +12,6 @@ do
   fi
 done
 
-ffmpeg -r 5 -f concat -i _temp_list.txt -c copy -c:v libx264 -crf 12 "output/export.mp4"
+ffmpeg -r 10 -f concat -i _temp_list.txt -c copy -c:v libx264 -crf 12 "output/export.mp4"
 rm _temp_list.txt 2> /dev/null
 
