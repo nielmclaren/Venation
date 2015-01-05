@@ -1,10 +1,10 @@
 
-class VenationDrawer {
+class VenationRenderer {
   VenationAlgorithm _va;
   PGraphics _g;
   int _size;
 
-  VenationDrawer(VenationAlgorithm va, PGraphics g, int size) {
+  VenationRenderer(VenationAlgorithm va, PGraphics g, int size) {
     _va = va;
     _g = g;
     _size = size;

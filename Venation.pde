@@ -1,15 +1,15 @@
 
 VenationAlgorithm va;
-VenationDrawer vd;
-ChristmasLightsDrawer cld;
+VenationRenderer vd;
+ChristmasLightsRenderer cld;
 FileNamer folderNamer, fileNamer;
 
 void setup() {
   size(540, 540);
 
   va = new VenationAlgorithm();
-  vd = new VenationDrawer(va, this.g, width);
-  cld = new ChristmasLightsDrawer(va, this.g, width);
+  vd = new VenationRenderer(va, this.g, width);
+  cld = new ChristmasLightsRenderer(va, this.g, width);
 
   folderNamer = new FileNamer("output/export", "/");
 
@@ -22,8 +22,8 @@ void draw() {
 
 void reset() {
   va = new VenationAlgorithm();
-  vd = new VenationDrawer(va, this.g, width);
-  cld = new ChristmasLightsDrawer(va, this.g, width);
+  vd = new VenationRenderer(va, this.g, width);
+  cld = new ChristmasLightsRenderer(va, this.g, width);
 
   fileNamer = new FileNamer(folderNamer.next() + "frame", "gif");
 }
@@ -39,7 +39,7 @@ void keyReleased() {
       reset();
       redraw();
       break;
-     
+
     case 'd':
       cld.recalculateColors();
       break;

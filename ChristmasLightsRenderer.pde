@@ -1,14 +1,14 @@
 
 import java.awt.Color;
 
-class ChristmasLightsDrawer {
+class ChristmasLightsRenderer {
   private VenationAlgorithm _va;
   private PGraphics _g;
   private int _size;
   private ArrayList<Integer> _palette;
   private ArrayList<Integer> _colors;
 
-  ChristmasLightsDrawer(VenationAlgorithm va, PGraphics g, int size) {
+  ChristmasLightsRenderer(VenationAlgorithm va, PGraphics g, int size) {
     _va = va;
     _g = g;
     _size = size;
