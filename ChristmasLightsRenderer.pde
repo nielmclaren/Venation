@@ -24,15 +24,15 @@ class ChristmasLightsRenderer {
     PVector p;
     color c;
 
-    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
-    int numVeinNodes = veinNodes.size();
+    Object[] veinNodes = _va.getVeinNodes().toArray();
+    int numVeinNodes = veinNodes.length;
 
     fillColors();
 
     _g.strokeWeight(2);
 
     for (int i = 0; i < numVeinNodes; i++) {
-      veinNode = veinNodes.get(i);
+      veinNode = (VeinNode)veinNodes[i];
       p = veinNode.getPositionRef();
       c = _colors.get(i);
       if (c == 0) continue;

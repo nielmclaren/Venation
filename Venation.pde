@@ -1,11 +1,10 @@
 
-VenationAlgorithm va, vaX2;
-VenationRenderer vr;
-CloudsRenderer renderer, rendererX2, rendererX_5;
+VenationAlgorithm va;
+VenationRenderer renderer;
 FileNamer folderNamer, fileNamer;
 
 void setup() {
-  size(612, 792);
+  size(800, 800);
 
   folderNamer = new FileNamer("output/export", "/");
 
@@ -18,36 +17,15 @@ void draw() {
 
 void reset() {
   va = new VenationAlgorithm();
-  vaX2 = new VenationAlgorithm();
-  vr = new VenationRenderer(va, this.g, width);
-  renderer = new CloudsRenderer(va, this.g, height, color(129, 195, 182));
-  rendererX2 = new CloudsRenderer(vaX2, this.g, height, color(25, 52, 134));
-  rendererX_5 = new CloudsRenderer(va, this.g, height*2, color(255, 224, 70));
+  renderer = new VenationRenderer(va, this.g, width);
 
   fileNamer = new FileNamer(folderNamer.next() + "frame", "gif");
-
-  for (int i = 0; i < 14; i++) {
-    va.step();
-    if (i > 6) {
-      vaX2.step();
-    }
-  }
 }
 
 void redraw() {
-  background(128);
-
-  pushMatrix();
-  scale(1.5);
-  rendererX2.draw();
-  popMatrix();
+  background(255);
 
   renderer.draw();
-
-  pushMatrix();
-  scale(0.5);
-  rendererX_5.draw();
-  popMatrix();
 }
 
 void keyReleased() {
@@ -59,7 +37,6 @@ void keyReleased() {
 
     case ' ':
       va.step();
-      vaX2.step();
       redraw();
       break;
 

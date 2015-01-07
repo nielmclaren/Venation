@@ -11,18 +11,15 @@ class SimpleRenderer {
   }
 
   void draw() {
-    VeinNode veinNode;
     PVector p;
 
-    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
-    int numVeinNodes = veinNodes.size();
+    Set<VeinNode> veinNodes = _va.getVeinNodes();
 
     _g.stroke(128);
     _g.strokeWeight(1);
     _g.noFill();
 
-    for (int i = 0; i < numVeinNodes; i++) {
-      veinNode = veinNodes.get(i);
+    for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       drawPoint(_size * p.x, _size * p.y);
     }

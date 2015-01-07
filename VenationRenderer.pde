@@ -27,7 +27,7 @@ class VenationRenderer {
     _g.noStroke();
     _g.fill(244);
 
-    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
+    Set<VeinNode> veinNodes = _va.getVeinNodes();
     for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);
@@ -62,7 +62,7 @@ class VenationRenderer {
     _g.strokeWeight(1);
     _g.fill(255);
 
-    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
+    Set<VeinNode> veinNodes = _va.getVeinNodes();
     for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       _g.ellipse(_size * p.x, _size * p.y, 2*r, 2*r);

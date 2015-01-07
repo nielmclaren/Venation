@@ -25,16 +25,17 @@ class CloudsRenderer {
     PVector p;
     float rw, rh;
 
-    ArrayList<VeinNode> veinNodes = _va.getVeinNodes();
-    int numVeinNodes = veinNodes.size();
+    Object[] veinNodes = _va.getVeinNodes().toArray();
+    int numVeinNodes = veinNodes.length;
 
     fillPoints();
 
     _g.fill(_c);
     _g.stroke(0);
     _g.strokeWeight(2);
+
     for (int i = 0; i < numVeinNodes; i++) {
-      veinNode = veinNodes.get(_reindex.get(i));
+      veinNode = (VeinNode)veinNodes[_reindex.get(i)];
       p = veinNode.getPositionRef();
       rw = _radii.get(2*i);
       rh = _radii.get(2*i+1);
@@ -44,7 +45,7 @@ class CloudsRenderer {
     fill(_c);
     noStroke();
     for (int i = 0; i < numVeinNodes; i++) {
-      veinNode = veinNodes.get(_reindex.get(i));
+      veinNode = (VeinNode)veinNodes[_reindex.get(i)];
       p = veinNode.getPositionRef();
       rw = _radii.get(2*i);
       rh = _radii.get(2*i+1);

@@ -2,21 +2,27 @@
  * @see http://algorithmicbotany.org/papers/venation.sig2005.pdf
  */
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
+
+import java.util.Set;
+
 class VenationAlgorithm {
   ArrayList<Auxin> _auxins;
   float _auxinRadius;
-  ArrayList<VeinNode> _veinNodes;
   float _veinNodeRadius;
   float _killRadius;
   float _neighborhoodRadius;
+  Graph _graph;
 
   VenationAlgorithm() {
     _auxins = new ArrayList<Auxin>();
     _auxinRadius = 0.025;
-    _veinNodes = new ArrayList<VeinNode>();
     _veinNodeRadius = 0.0125;
     _killRadius = 0.025;
     _neighborhoodRadius = 0.1;
+    _graph = new SimpleGraph(DefaultEdge.class);
 
     seedVeinNodes();
     seedAuxins();
@@ -48,16 +54,12 @@ class VenationAlgorithm {
     return _auxins.size();
   }
 
-  ArrayList<VeinNode> getVeinNodes() {
-    return _veinNodes;
+  Set<VeinNode> getVeinNodes() {
+    return _graph.vertexSet();
   }
 
   int numVeinNodes() {
-    return _veinNodes.size();
-  }
-
-  VeinNode getVeinNode(int index) {
-    return _veinNodes.get(index);
+    return _graph.vertexSet().size();
   }
 
   ArrayList<Auxin> getNeighborAuxins(float x, float y) {
@@ -79,7 +81,8 @@ class VenationAlgorithm {
     float dx, dy, r = 4.0 * _neighborhoodRadius * _neighborhoodRadius;
     PVector p;
     ArrayList<VeinNode> neighborVeinNodes = new ArrayList<VeinNode>();
-    for (VeinNode veinNode : _veinNodes) {
+    Set<VeinNode> veinNodes = _graph.vertexSet();
+    for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       dx = p.x - x;
       dy = p.y - y;
@@ -187,7 +190,8 @@ class VenationAlgorithm {
     VeinNode candidate = null;
     PVector p;
     float dx, dy, distSq, candidateDistSq = 0;
-    for (VeinNode veinNode : _veinNodes) {
+    Set<VeinNode> veinNodes = _graph.vertexSet();
+    for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       dx = p.x - x;
       dy = p.y - y;
@@ -209,10 +213,12 @@ class VenationAlgorithm {
 
   void seedVeinNodes() {
     float x, y;
+    VeinNode veinNode;
     for (int i = 0; i < 3; i++) {
       x = random(1);
       y = random(1);
-      _veinNodes.add(new VeinNode(x, y));
+      veinNode = new VeinNode(x, y);
+      _graph.addVertex(veinNode);
     }
   }
 
@@ -229,16 +235,18 @@ class VenationAlgorithm {
 
   void placeVeinNodes() {
     // Make sure we don't iterate newly-placed vein nodes.
-    int count = _veinNodes.size();
+    Object[] veinNodes = _graph.vertexSet().toArray();
+    int count = veinNodes.length;
     for (int i = 0; i < count; i++) {
-      placeVeinNode(i);
+      VeinNode veinNode = (VeinNode)veinNodes[i];
+      placeVeinNode(veinNode);
     }
   }
 
-  void placeVeinNode(int seedVeinNodeIndex) {
-    VeinNode veinNode = _veinNodes.get(seedVeinNodeIndex);
-    ArrayList<Auxin> influencerAuxins = getInfluencerAuxins(veinNode);
-    PVector p = getAuxinInfluenceDirection(veinNode, influencerAuxins);
+  void placeVeinNode(VeinNode seedVeinNode) {
+    VeinNode veinNode;
+    ArrayList<Auxin> influencerAuxins = getInfluencerAuxins(seedVeinNode);
+    PVector p = getAuxinInfluenceDirection(seedVeinNode, influencerAuxins);
     if (p != null) {
       if (p.mag() <= 0) {
         p.x = 1;
@@ -247,8 +255,10 @@ class VenationAlgorithm {
       }
       p.mult(2 * _veinNodeRadius);
       //p.rotate((2 * random(1) - 1) * 2 * PI * 0.05); // jitter
-      p.add(veinNode.getPositionRef());
-      _veinNodes.add(new VeinNode(p));
+      p.add(seedVeinNode.getPositionRef());
+      veinNode = new VeinNode(p);
+      _graph.addVertex(veinNode);
+      _graph.addEdge(seedVeinNode, veinNode);
     }
   }
 
@@ -304,7 +314,9 @@ class VenationAlgorithm {
     PVector p;
 
     r = _killRadius * _killRadius;
-    for (VeinNode veinNode : _veinNodes) {
+
+    Set<VeinNode> veinNodes = _graph.vertexSet();
+    for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       dx = p.x - x;
       dy = p.y - y;
@@ -334,7 +346,8 @@ class VenationAlgorithm {
     }
 
     r = _killRadius * _killRadius;
-    for (VeinNode veinNode : _veinNodes) {
+    Set<VeinNode> veinNodes = _graph.vertexSet();
+    for (VeinNode veinNode : veinNodes) {
       p = veinNode.getPositionRef();
       dx = p.x - x;
       dy = p.y - y;
